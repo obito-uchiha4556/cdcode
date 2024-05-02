@@ -1,0 +1,121 @@
+#include <stdio.h>
+int accepted = 0;
+
+void A(int val, int arr[], int size){
+	printf("A");
+    accepted = 0;
+    if (val >= size){
+        printf("\nString not accepted\n\n");
+        return;
+    }
+
+    if (arr[val] == 0){
+    	printf("->");
+        A(val+1, arr, size);
+    }
+    else if(arr[val] == 1){
+    	printf("->");
+        B(val+1, arr, size);
+    }
+    else{
+        printf("\nInvalid symbol - %d\n\n", arr[val]);
+    }
+}
+
+void B(int val, int arr[], int size){
+    accepted = 0;
+
+    printf("B");
+
+    if (val >= size){
+        printf("\nString not accepted\n\n");
+        return;
+    }
+
+    if (arr[val] == 0){
+    	printf("->");
+        C(val+1, arr, size);
+    }
+    else if(arr[val] == 1){
+    	printf("->");
+        B(val+1, arr, size);
+    }
+    else{
+        printf("\nInvalid symbol - %d\n\n", arr[val]);
+    }
+}
+
+void C(int val, int arr[], int size){
+    accepted = 0;
+
+    printf("C");
+
+    if (val >= size){
+        printf("\nString not accepted\n\n");
+        return;
+    }
+
+    if (arr[val] == 0){
+    	printf("->");
+        A(val+1, arr, size);
+    }
+    else if(arr[val] == 1){
+    	printf("->");
+        D(val+1, arr, size);
+    }
+    else{
+        printf("\nInvalid symbol - %d\n\n", arr[val]);
+    }
+}
+
+void D(int val, int arr[], int size){
+    accepted = 1;
+
+    printf("D");
+
+    if (val >= size){
+        printf("\nString accepted\n\n");
+        return;
+    }
+
+    if (arr[val] == 0){
+    	printf("->");
+        D(val+1, arr, size);
+    }
+    else if(arr[val] == 1){
+    	printf("->");
+        D(val+1, arr, size);
+    }
+    else{
+        printf("\nInvalid symbol - %d\n\n", arr[val]);
+    }
+}
+
+int main() {
+    int size;
+
+    while(1){
+    	printf("Enter the size of the sequence: ");
+	    scanf("%d", &size);
+
+	    if (size > 0){
+	    	int arr[size];
+		    int i;
+
+		    printf("Enter the sequence (0,1): ", size);
+
+			for (i = 0; i < size; i++) {
+		        scanf("%1d", &arr[i]);
+		    }
+
+		    printf("\nThe transition states are: ");
+
+		    A(0, arr, size);
+		}
+		else{
+			printf("Enter number greater than 0\n\n");
+		}
+	}
+
+    return 0;
+}
