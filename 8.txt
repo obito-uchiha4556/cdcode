@@ -1,0 +1,87 @@
+Compiler Design Lab - 8
+Implementation of Intermediate Code Generation
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+int i = 1, j = 0, no = 1;
+char str[100], left[15], right[15];
+void findopr();
+void explore();
+void fleft(int);
+void fright(int);
+struct exp
+{
+ int pos;
+ char op;
+} k[15];
+int main()
+{
+ printf("Enter the Expression:");
+ scanf("%s", str);
+ printf("The intermediate code:\n");
+ findopr();
+ explore();
+ printf("\nPress any key to continue...\n");
+ getchar(); // Wait for user input
+ return 0;
+}
+void findopr()
+{
+ for (i = 0; str[i] != '\0'; i++)
+ {
+ if (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/' || str[i] == '^')
+ {
+ k[j].pos = i;
+ k[j++].op = str[i];
+ }
+ }
+}
+void explore()
+{
+ for (i = 0; i < j; i++)
+ {
+ fleft(k[i].pos);
+ fright(k[i].pos);
+ printf("t%d = %s %c %s\n", no, left, k[i].op, right);
+ sprintf(left, "t%d", no++);
+ strcpy(right, "");
+ }
+}
+void fleft(int x)
+{
+ int w = 0, flag = 0;
+ x--;
+ while (x >= 0 && str[x] != '+' && str[x] != '=' && str[x] != '\0' && str[x] != '-' && str[x] != '/' && str[x] != 
+'^' && str[x] != '*')
+ {
+ if (str[x] != '$' && flag == 0)
+ {
+ left[w++] = str[x];
+ left[w] = '\0';
+ str[x] = '$';
+ flag = 1;
+ }
+ x--;
+ }
+}
+void fright(int x)
+{
+ int w = 0, flag = 0;
+ x++;
+ while (str[x] != '+' && str[x] != '\0' && str[x] != '^' && str[x] != '-' && str[x] != '/' && str[x] != '*' && 
+str[x] != '=')
+ {
+ if (str[x] != '$' && flag == 0)
+ {
+ right[w++] = str[x];
+ right[w] = '\0';
+ str[x] = '$';
+ flag = 1;
+ }
+ x++;
+ }
+}
+
+Output: 
+
+ 

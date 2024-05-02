@@ -1,0 +1,298 @@
+Compiler Design Lab - 6
+Simple Programs using Lex Code
+
+a)	Program to recognize integer real and exponential numbers using Lex
+%{
+#include <stdio.h>
+#include <stdlib.h>
+%}
+DIGIT [0-9]
+SIGN [-+]
+
+%%
+{SIGN}?{DIGIT}+         { printf("Integer: %s\n", yytext); }
+{SIGN}?{DIGIT}+"."{DIGIT}+  { printf("Real: %s\n", yytext); }
+{SIGN}?{DIGIT}+"."{DIGIT}+"e"{SIGN}?{DIGIT}+   { printf("Exponential: %s\n", yytext); }
+.                   { printf("Invalid input: %s\n", yytext); }
+%%
+int main() {
+    yylex();
+    return 0;
+}
+
+Output: 
+
+ 
+b)	Program to find the length of a string
+
+%{
+#include <stdio.h>
+%}
+
+%%
+[a-zA-Z]+    { printf("Length of the string: %d\n", yyleng); }
+.            { /* ignore all other characters */ }
+%%
+
+int main() {
+    yylex();
+    return 0;
+}
+
+Output: 
+
+ 
+c)	Program to count the number of letters in each line and to print the total number of
+rows and letters using files
+
+%{
+int letter_count = 0;
+int line_count = 0;
+%}
+
+%%
+[a-zA-Z]   { letter_count++; }
+\n         { line_count++; }
+.          ;
+
+%%
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: %s <input_file>\n", argv[0]);
+        return 1;
+    }
+
+    FILE *file = fopen(argv[1], "r");
+    if (!file) {
+        printf("Error opening file!\n");
+        return 1;
+    }
+
+    yyin = file;
+    yylex();
+
+    fclose(file);
+
+    printf("Number of letters: %d\n", letter_count);
+    printf("Number of lines: %d\n", line_count);
+
+    return 0;
+}
+
+Output: 
+
+ 
+
+d)	Program to scan even and odd numbers
+%{
+int even_count = 0;
+int odd_count = 0;
+%}
+
+%%
+
+[0-9]+ {
+    int num = atoi(yytext);
+    if(num % 2 == 0) {
+        even_count++;
+        printf("%d is even\n", num);
+    } else {
+        odd_count++;
+        printf("%d is odd\n", num);
+    }
+}
+
+\n {
+    printf("Total even numbers: %d\n", even_count);
+    printf("Total odd numbers: %d\n", odd_count);
+}
+
+. {}
+
+%%
+
+int main() {
+    yylex();
+    return 0;
+}
+
+Output: 
+
+ 
+e)	Program to remove uppercase and whitespaces
+%{
+%}
+%%
+
+[A-Z]       ; 
+[ \t\n]     ; 
+.           { 
+                printf("%c", yytext[0]);
+            }
+
+%%
+int main() {
+    yylex(); 
+    return 0;
+}
+Output: 
+
+ 
+f)	Program to count the number of vowels and consonants in a given string
+%{
+int vowel_count = 0;
+int consonant_count = 0;
+%}
+
+%%
+
+[aeiouAEIOU]    { vowel_count++; }
+[a-zA-Z]        { consonant_count++; }
+.               ;
+
+%%
+
+int main() {
+    char input[1000];
+    printf("Enter a string: ");
+    fgets(input, sizeof(input), stdin);
+    yy_scan_string(input);
+    yylex();
+    printf("Number of vowels: %d\n", vowel_count);
+    printf("Number of consonants: %d\n", consonant_count);
+    return 0;
+}
+
+Output: 
+
+ 
+g)	Program to recognize integer real and exponential numbers using Lex
+%{
+#include <stdio.h>
+#include <stdlib.h>
+%}
+
+DIGIT [0-9]
+%%
+{DIGIT}+ {
+    int num = atoi(yytext);
+    int i, flag = 0;
+    
+    if (num <= 1) {
+        printf("%d is not a prime number\n", num);
+    } else {
+        for (i = 2; i <= num / 2; i++) {
+            if (num % i == 0) {
+                flag = 1;
+                break;
+            }
+        }
+        
+        if (flag == 0) {
+            printf("%d is a prime number\n", num);
+        } else {
+            printf("%d is not a prime number\n", num);
+        }
+    }
+}
+.|\n
+%%
+
+int main() {
+    yylex();
+    return 0;
+}
+
+
+
+
+
+
+
+Output: 
+
+ 
+h)	Program to check if a date is valid or not. format of date is DD/MM/YYYY
+
+%{
+#include <stdio.h>
+%}
+
+DIGIT [0-9]
+MONTH (0[1-9]|1[0-2])
+DAY (0[1-9]|[12][0-9]|3[01])
+YEAR [0-9]{4}
+
+%%
+
+{DAY}"/"{MONTH}"/"{YEAR} {
+    int day = atoi(yytext);
+    int month = atoi(yytext + 3);
+    int year = atoi(yytext + 6);
+
+    if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
+        printf("Invalid date: %s\n", yytext);
+    } else if (month == 2) {
+        if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) {
+            if (day > 29) {
+                printf("Invalid date: %s\n", yytext);
+            }
+        } else {
+            if (day > 28) {
+                printf("Invalid date: %s\n", yytext);
+            }
+        }
+    } else if (day > 31) {
+        printf("Invalid date: %s\n", yytext);
+    } else {
+        printf("Valid date: %s\n", yytext);
+    }
+}
+
+.|\n
+
+%%
+
+int main() {
+    yylex();
+    return 0;
+}
+
+Output: 
+
+ 
+i)	Program to check  a valid URL
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+%}
+
+%%
+
+"https://"([a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,})[a-zA-Z0-9\-\._~:/?#\[\]@!\$&'\(\)\*\+,;=%]* {
+    printf("Valid URL: %s\n", yytext);
+}
+"http://"([a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,})[a-zA-Z0-9\-\._~:/?#\[\]@!\$&'\(\)\*\+,;=%]* {
+    printf("Valid URL: %s\n", yytext);
+}
+[a-zA-Z0-9\-\._~:/?#\[\]@!\$&'\(\)\*\+,;=%]+ {
+    printf("Invalid URL: %s\n", yytext);
+}
+
+%%
+
+int main() {
+    printf("Enter a URL: ");
+    yylex();
+    return 0;
+}
+
+Output: 
+
+ 
+
+
+
+

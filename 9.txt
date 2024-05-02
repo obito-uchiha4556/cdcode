@@ -1,0 +1,130 @@
+Compiler Design Lab - 9
+Quadruple generation from Infix Code Programming
+
+Quadruple Generation:
+
+#include <stdio.h>
+#include <stdlib.h> 
+#include <stdbool.h>
+
+typedef struct 
+{ 
+   char op;
+	int arg1; int arg2;
+	int result;
+} Instruction;
+
+void optimizeCode(Instruction* code, int numInstructions) 
+{
+	int i;
+   bool* eliminated = (bool*)calloc(numInstructions, sizeof(bool));
+	for (i = 0; i < numInstructions; i++) 
+	{ 
+      if (!eliminated[i]) 
+		{
+         Instruction current = code[i];
+         if (current.op == '+' || current.op == '-' || current.op == '*' || current.op == '/') 
+	      { 
+	         int arg1 = current.arg1;
+		      int arg2 = current.arg2;
+	   	   int result = current.result;
+		      int j;
+				for (j = i + 1; j < numInstructions; j++) 
+		      {
+		         Instruction next = code[j];
+			      if (!eliminated[j] && next.op == current.op && next.arg1 == arg1 && next.arg2 == arg2) 
+			      {
+			         code[j].result = result;
+				      eliminated[j] = true; 
+				   }
+            }
+        }
+        if (current.op == '+' && current.arg1 == 0) 
+	     {
+	         code[i].result = current.arg2;
+            eliminated[i] = true;
+        }
+        if (current.op == '*' && current.arg1 == 1) 
+	     {
+	         code[i].result = current.arg2;
+            eliminated[i] = true;
+	      }
+      }
+   }
+   free(eliminated);
+}
+
+int main() 
+{
+   // Example three-address code 
+	Instruction code[] = {
+      {'+', 2, 3, 4},
+      {'-', 4, 2, 5},
+      {'+', 3, 4, 6},
+      {'*', 6, 1, 7},
+      {'-', 7, 2, 8},
+      {'/', 8, 4, 9}
+   };
+
+   int numInstructions = sizeof(code) / sizeof(Instruction); optimizeCode(code, numInstructions);
+   // Print optimized code
+   int i;
+	for (i = 0; i < numInstructions; i++) 
+   {
+      if (code[i].op == '+' || code[i].op == '-' || code[i].op == '*' || code[i].op == '/') 
+         printf("%c %d %d %d\n", code[i].op, code[i].arg1, code[i].arg2, code[i].result);
+   }
+   return 0;
+}
+
+
+
+
+
+
+
+
+Output: 
+
+ 
+
+Machine Code Generation:
+
+#include <stdio.h>
+#include <stdlib.h> 
+#include <stdbool.h>
+int main()
+{
+   char icode[10][30], str[20], opr[10]; int i = 0;
+   printf("\n Enter the set of intermediate code (terminated by exit):\n"); 
+	do
+   {
+	   scanf("%s", icode[i]);
+   } while (strcmp(icode[i++], "exit") != 0);
+   printf("\n target code generation\n");
+   printf("************************\n");
+   i = 0;
+   do
+   {
+      strcpy(str, icode[i]); switch (str[3])
+      {
+			case '+':
+			strcpy(opr, "ADD"); break;
+			case '-':
+			strcpy(opr, "SUB"); break;
+			case '*':
+			strcpy(opr, "MUL"); break;
+			case '/':
+			strcpy(opr, "DIV"); break;
+      }
+      printf("\n\tMOV %c,R%d", str[2], i);
+      printf("\n\t%s%c,R%d", opr, str[4], i);
+      printf("\n\tMOV R%d,%c", i, str[0]);
+   } while (strcmp(icode[++i], "exit") != 0);
+   return 0;
+}
+
+Output: 
+
+ 
+
